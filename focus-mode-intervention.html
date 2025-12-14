@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FOCUS MODE: Padhle Bhai!</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#ef4444',
+            'primary-dark': '#dc2626',
+            'card-bg': '#ffffff',
+            'dark-text': '#1f2937',
+            'body-bg': '#000000',
+            success: '#10b981',
+            warning: '#f59e0b',
+            info: '#3b82f6'
+          },
+          fontFamily: {
+            heading: ['Poppins', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Default (Light) Theme Styles */
+    body { 
+        background:#000; 
+        min-height:100vh; 
+        overflow:hidden;
+        transition: background-color 0.3s ease;
+    }
+    .main-card {
+        background: #fff;
+        color: #1f2937;
+        box-shadow: 0 25px 50px -12px rgba(239, 68, 68, 0.35);
+        transition: all 0.3s ease;
+    }
+    .progress-circle {
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+      transition: stroke-dashoffset 0.5s linear;
+    }
+    .typewriter {
+        overflow: hidden;
+        border-right: .15em solid #1f2937;
+        white-space: nowrap;
+        transition: border-color 0.3s ease;
+    }
+
+    /* DARK MODE STYLES */
+    body.dark-mode {
+        background: #111827; /* Dark Grey background */
+    }
+
+    .dark-mode .main-card {
+        background: #1f2937; /* Even darker card */
+        color: #f3f4f6; /* Light text */
+        box-shadow: 0 25px 50px -12px rgba(59, 130, 246, 0.4); /* Blue glow shadow */
+        border-color: #3b82f6; /* Info blue border */
+    }
+    
+    .dark-mode #timerDisplay {
+        fill: #f3f4f6; /* Light text for timer */
+    }
+    
+    .dark-mode #progressRing {
+        stroke: #3b82f6 !important; /* Blue progress ring in dark mode */
+    }
+
+    .dark-mode .typewriter {
+        border-right-color: #f3f4f6; /* Light cursor */
+    }
+    
+    .dark-mode #start50 {
+        background-color: #1f2937;
+        color: #f3f4f6;
+        border-color: #3b82f6;
+    }
+
+    .dark-mode .bg-gray-100 {
+        background-color: #374151; /* Dark stats background */
+        color: #f3f4f6;
+    }
+    
+  </style>
+</head>
+<body class="font-body flex items-center justify-center p-4">
+
+  <div class="main-card rounded-3xl border-8 border-primary max-w-5xl w-full p-8 md:p-12 relative">
+    
+    <!-- Theme Toggle Button -->
+    <button id="themeToggle" class="absolute top-4 right-4 bg-gray-200 text-dark-text px-3 py-2 rounded-full text-sm font-semibold hover:bg-gray-300 transition shadow-md">
+        <i class="fas fa-sun" id="themeIcon"></i>
+    </button>
+
+    <h1 class="text-primary text-6xl md:text-7xl font-black text-center font-heading">PADHLE BHAI!</h1>
+
+    <p id="typewriterText" class="typewriter text-center text-2xl md:text-3xl font-bold mt-4">REEL CHALANE SE PASS NHI HOGA</p>
+
+    <!-- Live Stats -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 text-center">
+      <div class="bg-gray-100 rounded-2xl p-4">
+        <div id="sessionsCount" class="text-4xl font-bold text-primary">0</div>
+        <div class="text-sm">Focus Sessions</div>
+      </div>
+      <div class="bg-gray-100 rounded-2xl p-4">
+        <div id="focusMinutes" class="text-4xl font-bold text-primary">0</div>
+        <div class="text-sm">Minutes Focused</div>
+      </div>
+      <div class="bg-gray-100 rounded-2xl p-4">
+        <div id="focusScore" class="text-4xl font-bold text-primary">--</div>
+        <div class="text-sm">Focus Consistency (%)</div>
+      </div>
+    </div>
+
+    <!-- Timer -->
+    <div class="flex flex-col md:flex-row items-center justify-center gap-8 mt-10">
+      <svg class="w-40 h-40" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="45" fill="none" stroke="#e5e7eb" stroke-width="8" />
+        <circle id="progressRing" class="progress-circle" cx="50" cy="50" r="45" fill="none" stroke="#ef4444" stroke-width="8" stroke-dasharray="283" stroke-dashoffset="283" stroke-linecap="round" />
+        <text id="timerDisplay" x="50" y="55" text-anchor="middle" class="text-3xl font-bold fill-dark-text">25:00</text>
+      </svg>
+
+      <div>
+        <!-- Button layout adjusted to two rows using flex-col and nested flex rows -->
+        <div class="flex flex-col gap-3 mb-4 justify-center md:justify-start">
+            <div class="flex gap-3 justify-center md:justify-start">
+                <button id="start25" class="bg-primary text-white px-5 py-3 rounded-full font-bold">Start 25</button>
+                <button id="start50" class="bg-white border-2 border-primary px-5 py-3 rounded-full font-bold">Start 50</button>
+            </div>
+            <div class="flex gap-3 justify-center md:justify-start">
+                <button id="addTime" class="bg-info hover:bg-blue-600 text-white px-5 py-3 rounded-full font-bold transition duration-150">Add 10 min</button>
+                <button id="reset" class="bg-dark-text text-white px-5 py-3 rounded-full font-bold">Reset</button>
+            </div>
+        </div>
+        <p id="timerMsg" class="text-sm opacity-80 text-center md:text-left">Start a session to build your focus data.</p>
+      </div>
+    </div>
+
+    <!-- Motivation -->
+    <div class="mt-10 bg-gray-100 p-6 rounded-2xl text-center">
+      <p id="quoteText" class="italic">Success is the sum of small efforts, repeated daily.</p>
+      <p class="mt-2 text-sm">— <span id="quoteAuthor">Robert Collier</span></p>
+      <button id="motivate" class="mt-4 bg-primary text-white px-6 py-2 rounded-full font-bold">Generate Motivation</button>
+    </div>
+
+  </div>
+
+<script>
+  // ---------------- API KEY (Needed for future Gemini integration) ----------------
+  const apiKey = "";
+  const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+  // ---------------- THEME TOGGLE ----------------
+  const themeToggleBtn = document.getElementById('themeToggle');
+  const themeIcon = document.getElementById('themeIcon');
+  const body = document.body;
+  const mainCard = document.querySelector('.main-card');
+
+  function applyTheme(isDark) {
+      if (isDark) {
+          body.classList.add('dark-mode');
+          themeIcon.classList.replace('fa-sun', 'fa-moon');
+          themeToggleBtn.classList.remove('bg-gray-200', 'text-dark-text');
+          themeToggleBtn.classList.add('bg-gray-600', 'text-white');
+          localStorage.setItem('theme', 'dark');
+      } else {
+          body.classList.remove('dark-mode');
+          themeIcon.classList.replace('fa-moon', 'fa-sun');
+          themeToggleBtn.classList.remove('bg-gray-600', 'text-white');
+          themeToggleBtn.classList.add('bg-gray-200', 'text-dark-text');
+          localStorage.setItem('theme', 'light');
+      }
+  }
+
+  function toggleTheme() {
+      const isCurrentlyDark = body.classList.contains('dark-mode');
+      applyTheme(!isCurrentlyDark);
+  }
+
+  // Initial theme load
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark') {
+      applyTheme(true);
+  } else {
+      applyTheme(false); // Default to light
+  }
+
+  themeToggleBtn.addEventListener('click', toggleTheme);
+  
+  // ---------------- TIMER + STATS ----------------
+  const FULL = 283
+  let timer = null
+  let initial = 25 * 60
+  let remaining = initial
+
+  // Persistent stats
+  const stats = JSON.parse(localStorage.getItem('focusStats') || '{"sessions":0,"minutes":0,"history":[]}')
+
+  const elTimer = document.getElementById('timerDisplay')
+  const ring = document.getElementById('progressRing')
+  const msg = document.getElementById('timerMsg')
+  const addTimeBtn = document.getElementById('addTime')
+
+  function format(t){return `${String(Math.floor(t/60)).padStart(2,'0')}:${String(t%60).padStart(2,'0')}`}
+
+  function updateUI(){
+    elTimer.textContent = format(remaining)
+    // The fraction logic remains the same, calculating how much of the stroke-dashoffset should be visible.
+    const frac = remaining / initial
+    ring.style.strokeDashoffset = FULL * (1 - frac)
+  }
+
+  function tick(){
+    if(remaining>0){remaining--}
+    else{
+      clearInterval(timer); timer=null
+      stats.sessions++
+      stats.minutes += Math.round(initial/60)
+      stats.history.push(initial/60)
+      localStorage.setItem('focusStats', JSON.stringify(stats))
+      loadStats()
+      msg.textContent = 'Session complete. Data logged.'
+      return
+    }
+    updateUI()
+  }
+
+  function start(min){
+    if(timer) return
+    initial = min*60
+    remaining = initial
+    updateUI()
+    msg.textContent = 'Focus mode ON. Distractions OFF.'
+    timer = setInterval(tick,1000)
+  }
+
+  function reset(){
+    clearInterval(timer); timer=null
+    initial = 25*60
+    remaining = initial
+    updateUI()
+    msg.textContent = 'Timer reset.'
+  }
+
+  /**
+   * Increases the current running timer's duration by the specified minutes.
+   * If the timer is not running, it updates the display duration.
+   * @param {number} min - Minutes to add (e.g., 10).
+   */
+  function addTime(min) {
+    const timeToAdd = min * 60;
+    remaining += timeToAdd;
+    initial += timeToAdd; // Crucial to keep the progress fraction accurate
+    updateUI();
+    
+    if (timer) {
+      msg.textContent = `Extended session by ${min} minutes. Current duration: ${format(initial)}`;
+    } else {
+      msg.textContent = `Set focus duration to ${format(initial)}. Press Start to begin.`;
+    }
+  }
+
+  document.getElementById('start25').onclick = ()=>start(25)
+  document.getElementById('start50').onclick = ()=>start(50)
+  document.getElementById('reset').onclick = reset
+  addTimeBtn.onclick = () => addTime(10) // Attach new functionality
+
+  // ---------------- STATS ----------------
+  function loadStats(){
+    document.getElementById('sessionsCount').textContent = stats.sessions
+    document.getElementById('focusMinutes').textContent = stats.minutes
+    if(stats.history.length>1){
+      const avg = stats.history.reduce((a,b)=>a+b,0)/stats.history.length
+      const variance = stats.history.reduce((a,b)=>a+Math.pow(b-avg,2),0)/stats.history.length
+      const consistency = Math.max(0, 100 - Math.sqrt(variance)*10)
+      document.getElementById('focusScore').textContent = consistency.toFixed(0)
+    } else {
+      document.getElementById('focusScore').textContent = '--'
+    }
+  }
+  loadStats()
+
+  // ---------------- MOTIVATION ----------------
+  const quotes=[
+    ['Discipline is choosing what you want most over what you want now.','Focus Core'],
+    ['Every minute focused bends probability in your favour.','Focus Core'],
+    ['Your future rank is a statistical outcome of today’s habits.','Focus Core'],
+  ]
+  document.getElementById('motivate').onclick=()=>{
+    const q = quotes[Math.floor(Math.random()*quotes.length)]
+    document.getElementById('quoteText').textContent=q[0]
+    document.getElementById('quoteAuthor').textContent=q[1]
+  }
+
+  // Typewriter
+  const tw=document.getElementById('typewriterText');const txt=tw.textContent;tw.textContent='';let i=0
+  ;(function type(){if(i<txt.length){tw.textContent+=txt[i++];setTimeout(type,70)}else{tw.style.border='none'}})()
+
+  updateUI()
+</script>
+</body>
+</html>
